@@ -174,6 +174,26 @@ function setupMap(): () => void {
 
 		controls.geocoder.on('result', (event: any) => {
 			location.value = event.result.center;
+
+			if (geometryType === 'Point') {
+				controls.draw.deleteAll();
+
+				const pointFeature = {
+					type: 'Feature',
+					geometry: {
+						type: 'Point',
+						coordinates: event.result.center,
+					},
+				};
+
+				controls.draw.add(pointFeature);
+
+				currentGeometry = getCurrentGeometry();
+
+				if (currentGeometry) {
+					emit('input', serialize(currentGeometry as any));
+				}
+			}
 		});
 
 		controls.geocoder.on('clear', () => {
